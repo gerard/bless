@@ -1,24 +1,25 @@
 #!/usr/bin/env python
-import bless.widget
-import bless.events
-
-combo_contents = [
-    'ASDF',
-    'QWER',
-    'ZXCV',
-]
+from bless.widgets.combolist import ComboList
+from bless.widgets.popup import Popup
+from bless.application import Application
+from bless.events import KEYS
+import sys
 
 
 def combo_selected(w):
+    text = w.get_selected()
+    popup = Popup(text)
+    popup.set_titlebar(text)
+
     global app
-    s = w.get_selected()
-    popup = bless.widget.Popup(s)
     app.push(popup)
     app.handle()
-    
 
-app = bless.widget.Application()
-combo = bless.widget.ComboList(combo_contents)
-combo.add_handler(bless.events.KEYS.ENTER, combo_selected)
+
+combo = ComboList(['ASDF', 'QWER', 'ZXCV'])
+combo.add_handler(KEYS.ENTER, combo_selected)
+combo.set_titlebar("BLESS Test Application: %s" % sys.argv[0])
+
+app = Application()
 app.push(combo)
 app.handle()

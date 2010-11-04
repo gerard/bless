@@ -5,6 +5,6 @@ $(APPS): %.py:
 
 clean:
 	find . -name '*.pyc' | xargs -r rm
-	rm -r logs
+	rm -rf logs
 
 .PHONY: $(APPS)
