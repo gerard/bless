@@ -1,8 +1,15 @@
 import curses
 import bless.events
 from bless._ehandler import EventHandler
-from utils.debug import DEBUG
-from utils.bassert import ASSERT_SCREEN
+
+try:
+    from utils.debug import DEBUG
+    from utils.bassert import ASSERT_SCREEN
+except ImportError:
+    # These modules should not be available in the distribution.  Simply define
+    # some dummy stubs for now.
+    def DEBUG(s): pass
+    def ASSERT_SCREEN(f): return f
 
 class Widget(object):
     """
