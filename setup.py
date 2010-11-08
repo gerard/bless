@@ -1,9 +1,22 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import subprocess
+
+
+# Obtain version information from git
+try:
+    p = subprocess.Popen(['git', 'describe'], stdout=subprocess.PIPE)
+    (pstdout, _) = p.communicate()
+    version = pstdout.strip()
+except OSError:
+    import sys
+    print >> sys.stderr, "Please install git to have version information on your build"
+    sys.exit(1)
+
 
 setup(name='bless',
-      version='0.1',
+      version=version,
       description='Curses Widget library for python',
       author='Gerard Lledo',
       author_email='gerard.lledo@gmail.com',
