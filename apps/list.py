@@ -4,6 +4,7 @@ from bless.widgets.popup import Popup
 from bless.application import Application
 from bless.events import KEYS
 import sys
+import re
 
 
 def combo_selected(w):
@@ -16,8 +17,13 @@ def combo_selected(w):
     app.handle()
 
 
+f = open("/usr/share/dict/words")
+regex = re.compile('.*fun[a-z]*$')
+list = filter(lambda s: regex.match(s), [l.strip() for l in f.readlines()])
+f.close()
+
 combo = ComboList()
-for i in ['ASDF', 'QWER', 'ZXCV']: combo.add_item(i)
+for i in list: combo.add_item(i)
 combo.add_handler(KEYS.ENTER, combo_selected)
 combo.set_titlebar("BLESS Test Application: %s" % sys.argv[0])
 

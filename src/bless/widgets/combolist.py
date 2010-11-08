@@ -4,6 +4,7 @@ import bless.events
 class ComboList(Widget):
     list = []
     pos = None
+    first_visible = 0
 
     def __init__(self, alignment=Widget.JUSTIFY_LEFT):
         super(ComboList, self).__init__()
@@ -41,15 +42,20 @@ class ComboList(Widget):
 
     def refresh(self):
         super(ComboList, self).refresh()
-        for (i, item) in enumerate(self.list):
-            if i >= self.height: break
-            if len(item) > self.width:
-                str = item[:self.width]
-            else:
-                str = item
 
-            if i == self.pos:
-                self.addstr(self.__get_wrapped_str(), self.pos, standout=1)
+        if self.pos < self.first_visible:
+            self.first_visible = self.pos
+
+        last_visible = self.first_visible + self.height - 1
+        if self.pos > last_visible:
+            self.first_visible += (self.pos - last_visible)
+
+        for (i, item) in enumerate(self.list[self.first_visible:]):
+            if i >= self.height: break
+            str = item[:self.width]
+
+            if i == self.pos - self.first_visible:
+                self.addstr(self.__get_wrapped_str(str), i, standout=1)
             else:
                 self.addstr(self.__get_wrapped_str(str), i, 0)
 
