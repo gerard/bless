@@ -118,12 +118,11 @@ class Widget(object):
         return self.ehandler.define(event, f, [self] + args)
 
     def handle(self):
-        while True:
-            key = self.s.getch()
-            if self.ehandler.is_defined(key):
-                self.ehandler.run(key)
-                self.refresh()
-            else:
-                return self.ehandler.run(key)
-
+        key = self.s.getch()
+        if self.ehandler.is_defined(key):
+            self.ehandler.run(key)
+            self.refresh()
+            return (True, None)
+        else:
+            return (False, self.ehandler.run(key))
 

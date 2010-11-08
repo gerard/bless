@@ -48,7 +48,7 @@ class Application:
         return ret
 
     def handle(self):
-        """
-        This only passes the control to the topmost widget
-        """
-        return self.__get_widget().handle()
+        w = self.__get_widget()
+        while True:
+            (again, ret) = w.handle()
+            if not again: return ret
