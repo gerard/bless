@@ -16,7 +16,8 @@ def combo_selected(w):
     app.handle()
 
 
-combo = ComboList(['ASDF', 'QWER', 'ZXCV'])
+combo = ComboList()
+for i in ['ASDF', 'QWER', 'ZXCV']: combo.add_item(i)
 combo.add_handler(KEYS.ENTER, combo_selected)
 combo.set_titlebar("BLESS Test Application: %s" % sys.argv[0])
 
