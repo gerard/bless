@@ -42,6 +42,17 @@ class Widget(object):
         self.ehandler.define(bless.events.KEYS.LEFT)
 
 
+    def __screen_fit(self, yparent, xparent):
+        if self.ysize == 0 or self.xsize == 0:
+            return (yparent, xparent)
+        else:
+            return (min(self.ysize, yparent), min(self.xsize, xparent))
+
+    def __screen_position(self, yparent, xparent):
+        ystart = (yparent - self.yfitted) / 2
+        xstart = (xparent - self.xfitted) / 2
+        return (ystart, xstart)
+
     def __screen_init__(self, yparent, xparent, yoff=0, xoff=0):
         """
         Window initialization
@@ -52,21 +63,17 @@ class Widget(object):
         self.yoff = yoff
         self.xoff = xoff
 
-        if self.ysize == 0 or self.xsize == 0:
-            (self.yfitted, self.xfitted) = (yparent, xparent)
-        else:
-            self.yfitted = min(self.ysize, yparent)
-            self.xfitted = min(self.xsize, xparent)
-
+        (self.yfitted, self.xfitted) = self.__screen_fit(yparent, xparent)
         self.s = curses.newwin(self.yfitted, self.xfitted, yoff, xoff)
-        ystart = (yparent - self.yfitted) / 2
-        xstart = (xparent - self.xfitted) / 2
-        self.mvwin(ystart + self.yoff, xstart - self.yoff)
+
+        (ystart, xstart) = self.__screen_position(yparent, xparent)
+        self.mvwin(ystart + self.yoff, xstart - self.xoff)
+
+        (self.height, self.width) = (self.yfitted - 2, self.xfitted - 2)
 
         self.s.border()
         self.s.keypad(1)
 
-        (self.height, self.width) = (self.yfitted - 2, self.xfitted - 2)
 
     @ASSERT_SCREEN
     def __screen_del__(self):
