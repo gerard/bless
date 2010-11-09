@@ -50,5 +50,6 @@ class Application:
     def handle(self):
         w = self.__get_widget()
         while True:
-            (again, ret) = w.handle()
+            key = w.s.getch()
+            (again, ret) = w.handle(key)
             if not again: return ret

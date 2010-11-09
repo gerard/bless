@@ -124,8 +124,7 @@ class Widget(object):
     def add_handler(self, event, f=lambda: None, args=[]):
         return self.ehandler.define(event, f, [self] + args)
 
-    def handle(self):
-        key = self.s.getch()
+    def handle(self, key):
         if self.ehandler.is_defined(key):
             self.ehandler.run(key)
             self.refresh()
