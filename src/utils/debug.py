@@ -25,8 +25,10 @@ def ANNOTATE_DEBUG(fn):
         level -= 1
         print >> logfile, "->" * level, fn_ret
         print >> logfile, "->" * level
+        logfile.flush()
         return fn_ret
     return wrapper
 
 def DEBUG(s):
     print >> logfile, "==" * level, s
+    logfile.flush()
