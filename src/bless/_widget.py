@@ -90,6 +90,10 @@ class Widget(object):
     def mvwin(self, y, x):
         return self.s.mvwin(y, x)
 
+    def resize(self, y, x, yoff=0, xoff=0):
+        self.__screen_init__(y, x, yoff, xoff)
+        self.refresh()
+
     @ASSERT_SCREEN
     def addstr(self, str, y, x=0, how=JUSTIFY_LEFT, standout=0, raw=0):
         if not raw:
@@ -104,10 +108,17 @@ class Widget(object):
             attr = curses.A_STANDOUT
 
         n = min(self.width - x, len(str))
-        if not raw:
-            self.s.addnstr(y+1, x+1, str, n, attr)
-        else:
-            self.s.addnstr(y, x, str, n, attr)
+        try:
+            if not raw:
+                self.s.addnstr(y+1, x+1, str, n, attr)
+            else:
+                self.s.addnstr(y, x, str, n, attr)
+        except curses.error:
+            # Unfortunately, we have no way to tell if one resize event has just
+            # happened and we are unable to control that we are not writing
+            # outside the window.  It should be safe to ignore this error, as
+            # a refresh will come with the resize event.
+            pass
 
     @ASSERT_SCREEN
     def addch(self, c, y, x=0):
@@ -127,7 +138,7 @@ class Widget(object):
     def handle(self, key):
         if self.ehandler.is_defined(key):
             self.ehandler.run(key)
-            self.refresh()
+            self.s.refresh()
             return (True, None)
         else:
             return (False, self.ehandler.run(key))

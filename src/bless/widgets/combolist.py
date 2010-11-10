@@ -40,6 +40,9 @@ class ComboList(Widget):
     def next(self): self.jump(+1)
     def prev(self): self.jump(-1)
 
+    def resize(self, newy, newx, offy, offx):
+        super(ComboList, self).resize(newy, newx, offy, offx)
+
     def refresh(self):
         super(ComboList, self).refresh()
 

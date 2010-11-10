@@ -15,6 +15,7 @@ def combo_selected(w):
     global app
     app.push(popup)
     app.handle()
+    app.pop()
 
 
 f = open("/usr/share/dict/words")
@@ -30,3 +31,4 @@ combo.set_titlebar("BLESS Test Application: %s" % sys.argv[0])
 app = Application()
 app.push(combo)
 app.handle()
+app.close()

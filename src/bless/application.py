@@ -1,4 +1,10 @@
 import curses
+from bless._ehandler import EventHandler
+
+try:
+    from utils.debug import DEBUG
+except ImportError:
+    def DEBUG(s): pass
 
 class Application:
     __widget_stack = []
@@ -10,11 +16,14 @@ class Application:
         self.s.keypad(1)
         (self.ysize, self.xsize) = self.s.getmaxyx()
 
+        self.ehandler = EventHandler()
+        self.ehandler.define(curses.KEY_RESIZE, self.resize)
+        self.ehandler.define(-1, lambda: None)
+
     def __del__(self):
-        self.s.keypad(0)
         self.s.erase()
-        self.s.touchwin()
         self.s.refresh()
+        del(self.s)
         curses.nocbreak()
         curses.echo()
         curses.endwin()
@@ -22,6 +31,14 @@ class Application:
     def __get_widget(self):
         if self.__widget_stack == []: return None
         else: return self.__widget_stack[-1]
+
+    def close(self):
+        self.__del__()
+
+    def resize(self):
+        (newy, newx) = self.s.getmaxyx()
+        for w in self.__widget_stack: w.resize(newy, newx, 0, 0)
+        for w in self.__widget_stack: w.refresh()
 
     def push(self, w):
         """
@@ -51,5 +68,9 @@ class Application:
         w = self.__get_widget()
         while True:
             key = w.s.getch()
-            (again, ret) = w.handle(key)
-            if not again: return ret
+            if self.ehandler.is_defined(key):
+                self.ehandler.run(key)
+            else:
+                (again, ret) = w.handle(key)
+                w.refresh()
+                if not again: return ret
