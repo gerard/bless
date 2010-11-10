@@ -42,6 +42,8 @@ class ComboList(Widget):
 
     def resize(self, newy, newx, offy, offx):
         super(ComboList, self).resize(newy, newx, offy, offx)
+        if (len(self.list) - self.first_visible) < self.height:
+            self.first_visible = max(0, len(self.list) - self.height)
 
     def refresh(self):
         super(ComboList, self).refresh()
