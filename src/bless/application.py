@@ -23,7 +23,6 @@ class Application:
     def __del__(self):
         self.s.erase()
         self.s.refresh()
-        del(self.s)
         curses.nocbreak()
         curses.echo()
         curses.endwin()
@@ -68,9 +67,13 @@ class Application:
         w = self.__get_widget()
         while True:
             key = w.s.getch()
-            if self.ehandler.is_defined(key):
-                self.ehandler.run(key)
-            else:
-                (again, ret) = w.handle(key)
-                w.refresh()
-                if not again: return ret
+            try:
+                if self.ehandler.is_defined(key):
+                    self.ehandler.run(key)
+                else:
+                    (again, ret) = w.handle(key)
+                    w.refresh()
+                    if not again: return ret
+            except:
+                self.__del__()
+                raise
